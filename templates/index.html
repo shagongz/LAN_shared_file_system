@@ -1,0 +1,77 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>文件共享系统 - {{ current_dir or "根目录" }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="main-container">
+        <!-- 文件浏览区 -->
+        <div class="browse-section">
+            <div class="breadcrumb">
+                <a href="/">🏠 根目录</a>
+                {% for crumb in breadcrumbs %}
+                    / <a href="/{{ crumb.path }}">{{ crumb.name }}</a>
+                {% endfor %}
+            </div>
+
+            <div class="file-list-container">
+                <h2>📂 当前目录内容</h2>
+                <ul class="file-list">
+                    {% for item in items %}
+                        {% set item_full_path = os.path.join(base_dir, current_dir, item) %}
+                        <li>
+                            {% if os.path.isdir(item_full_path) %}
+                                📁 <a href="/{{ os.path.join(current_dir, item) }}">{{ item }}</a>
+                            {% else %}
+                                📄 <a href="/download/{{ os.path.join(current_dir, item) }}" download>{{ item }}</a>
+                                <span class="file-size">
+                                    ({{ (os.path.getsize(item_full_path)/1048576)|round(1) }} MB)
+                                </span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- 文件上传区 -->
+        <div class="upload-section">
+            <h2>📤 文件上传</h2>
+            <form method="post" enctype="multipart/form-data" action="/upload">
+                <div class="upload-box">
+                    <input type="file" name="file" id="file-input" accept="*/*">
+                    <label for="file-input" class="upload-button">
+                        <span class="button-text">选择文件</span>
+                        <span class="file-name" id="file-name"></span>
+                    </label>
+                    <button type="submit" class="upload-submit">开始上传</button>
+                </div>
+            </form>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <div class="flash-message">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <div class="upload-info">
+                <h3>上传说明</h3>
+                <ul>
+                    <li>支持格式：{{ allowed_extensions }}</li>
+                    <li>最大文件：{{ max_file_size }}MB</li>
+                    <li>保存路径：{{ upload_folder }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
