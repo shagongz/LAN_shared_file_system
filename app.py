@@ -34,7 +34,15 @@ def select_folder():
 
 
 # 启动时选择文件夹
-BASE_DIR, UPLOAD_FOLDER = select_folder()
+if setting.PATH == "":
+    BASE_DIR, UPLOAD_FOLDER = select_folder()
+else:
+    BASE_DIR = setting.PATH
+    upload_folder = os.path.join(BASE_DIR, "Upload")
+    os.makedirs(upload_folder, exist_ok=True)
+    UPLOAD_FOLDER = upload_folder
+print("共享文件夹：", BASE_DIR)
+print("上传文件夹：", UPLOAD_FOLDER)
 
 # ███ 配置参数 ███████████████████████████████████████████████████████████
 ALLOWED_EXTENSIONS = setting.ALLOWED_EXTENSIONS

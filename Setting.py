@@ -6,3 +6,5 @@ class Setting:
         self.MAX_FILE_SIZE = 100  # 单位：MB
         # 服务开放端口
         self.PORT = 5000
+        # 默认共享文件夹地址
+        self.PATH = "C:/Users/画外人/Desktop/my_serve"
